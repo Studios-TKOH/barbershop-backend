@@ -1,0 +1,40 @@
+name: Bootstrap project metadata
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [.github/project-metadata.json, .github/workflows/bootstrap-project.yml]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync labels
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -c '.labels[]' .github/project-metadata.json | while read -r item; do
+            name=$(jq -r '.name' <<<"$item"); color=$(jq -r '.color' <<<"$item"); desc=$(jq -r '.description' <<<"$item")
+            encoded=$(jq -rn --arg value "$name" '$value|@uri')
+            if gh api "repos/$REPO/labels/$encoded" >/dev/null 2>&1; then
+              gh api --method PATCH "repos/$REPO/labels/$encoded" -f new_name="$name" -f color="$color" -f description="$desc" >/dev/null
+            else
+              gh api --method POST "repos/$REPO/labels" -f name="$name" -f color="$color" -f description="$desc" >/dev/null
+            fi
+          done
+      - name: Sync milestones
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -r '.milestones[]' .github/project-metadata.json | while read -r title; do
+            exists=$(gh api "repos/$REPO/milestones?state=all&per_page=100" --jq ".[] | select(.title == \"$title\") | .number" | head -n1 || true)
+            [ -n "$exists" ] || gh api --method POST "repos/$REPO/milestones" -f title="$title" >/dev/null
+          done

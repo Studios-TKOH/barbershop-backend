@@ -1,0 +1,3 @@
+-- Seed data must be synthetic and deterministic.
+-- M1/M2 will add the first development shop, services and test identities after schemas exist.
+-- Never place production PII, access tokens or credentials here.

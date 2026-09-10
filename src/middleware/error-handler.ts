@@ -19,7 +19,7 @@ export function errorHandler(
       title: status >= 500 ? 'Internal server error' : error.message,
       status,
       code,
-      detail: error instanceof HttpError ? error.detail ?? null : null,
+      detail: error instanceof HttpError ? (error.detail ?? null) : null,
       traceId: request.id,
     });
 }

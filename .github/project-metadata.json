@@ -1,20 +1,66 @@
 {
   "labels": [
-    {"name":"feature","color":"1f883d","description":"Nueva capacidad funcional"},
-    {"name":"bug","color":"d1242f","description":"Defecto confirmado"},
-    {"name":"documentation","color":"0969da","description":"Documentación"},
-    {"name":"refactor","color":"8250df","description":"Mejora interna sin cambio funcional"},
-    {"name":"testing","color":"bf8700","description":"Pruebas y calidad"},
-    {"name":"devops","color":"57606a","description":"CI/CD, entornos y operación"},
-    {"name":"integration","color":"0550ae","description":"Integración entre sistemas"},
-    {"name":"security","color":"cf222e","description":"Seguridad, privacidad o permisos"},
-    {"name":"tech-debt","color":"9a6700","description":"Deuda técnica planificada"},
-    {"name":"blocked","color":"6e7781","description":"Bloqueado por dependencia"}
+    {
+      "name": "feature",
+      "color": "1f883d",
+      "description": "Nueva capacidad funcional"
+    },
+    {
+      "name": "bug",
+      "color": "d1242f",
+      "description": "Defecto confirmado"
+    },
+    {
+      "name": "documentation",
+      "color": "0969da",
+      "description": "Documentación"
+    },
+    {
+      "name": "refactor",
+      "color": "8250df",
+      "description": "Mejora interna sin cambio funcional"
+    },
+    {
+      "name": "testing",
+      "color": "bf8700",
+      "description": "Pruebas y calidad"
+    },
+    {
+      "name": "devops",
+      "color": "57606a",
+      "description": "CI/CD, entornos y operación"
+    },
+    {
+      "name": "integration",
+      "color": "0550ae",
+      "description": "Integración entre sistemas"
+    },
+    {
+      "name": "security",
+      "color": "cf222e",
+      "description": "Seguridad, privacidad o permisos"
+    },
+    {
+      "name": "tech-debt",
+      "color": "9a6700",
+      "description": "Deuda técnica planificada"
+    },
+    {
+      "name": "blocked",
+      "color": "6e7781",
+      "description": "Bloqueado por dependencia"
+    }
   ],
   "milestones": [
-    "M0 · Product Definition", "M1 · Technical Foundation", "M2 · Authentication & Roles",
-    "M3 · Booking Engine", "M4 · Barber Operations", "M5 · Loyalty & QR",
-    "M6 · Events & Engagement", "M7 · Notifications & Integrations",
-    "M8 · Beta & Hardening", "M9 · Google Play Release"
+    "M0 · Product Definition",
+    "M1 · Technical Foundation",
+    "M2 · Authentication & Roles",
+    "M3 · Booking Engine",
+    "M4 · Barber Operations",
+    "M5 · Loyalty & QR",
+    "M6 · Events & Engagement",
+    "M7 · Notifications & Integrations",
+    "M8 · Beta & Hardening",
+    "M9 · Google Play Release"
   ]
 }

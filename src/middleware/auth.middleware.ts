@@ -1,9 +1,9 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyRequest } from 'fastify';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { HttpError } from '../utils/http-error.js';
 
 export function requireAuth(supabase: SupabaseClient) {
-  return async function authMiddleware(request: FastifyRequest, _reply: FastifyReply) {
+  return async function authMiddleware(request: FastifyRequest) {
     const authorization = request.headers.authorization;
     const token = authorization?.startsWith('Bearer ') ? authorization.slice(7) : null;
 

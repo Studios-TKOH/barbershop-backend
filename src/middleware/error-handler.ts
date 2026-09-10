@@ -1,7 +1,11 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { HttpError } from '../utils/http-error.js';
 
-export function errorHandler(error: FastifyError | HttpError, request: FastifyRequest, reply: FastifyReply) {
+export function errorHandler(
+  error: FastifyError | HttpError,
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const status = error instanceof HttpError ? error.statusCode : 500;
   const code = error instanceof HttpError ? error.code : 'INTERNAL_ERROR';
 

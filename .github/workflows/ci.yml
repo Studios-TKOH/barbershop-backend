@@ -2,8 +2,9 @@ name: CI
 
 on:
   pull_request:
+    branches: [dev, main]
   push:
-    branches: [main, develop]
+    branches: [main, dev]
 
 permissions:
   contents: read
@@ -24,7 +25,9 @@ jobs:
         run: npm run lint
       - name: Typecheck
         run: npm run typecheck
-      - name: Test
-        run: npm test
+      - name: Unit tests
+        run: npm run test:unit
+      - name: Integration tests
+        run: npm run test:integration
       - name: Build
         run: npm run build

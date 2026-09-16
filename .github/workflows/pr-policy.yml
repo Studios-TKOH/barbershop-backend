@@ -1,0 +1,66 @@
+name: PR Policy
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+    branches: [dev, main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate target, branch, title and issue linkage
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE="$(jq -r '.pull_request.base.ref' "$GITHUB_EVENT_PATH")"
+          HEAD="$(jq -r '.pull_request.head.ref' "$GITHUB_EVENT_PATH")"
+          TITLE="$(jq -r '.pull_request.title' "$GITHUB_EVENT_PATH")"
+          BODY="$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")"
+
+          echo "Base: $BASE"
+          echo "Head: $HEAD"
+          echo "Title: $TITLE"
+
+          if [[ "$BASE" == "main" ]]; then
+            if [[ "$HEAD" != "dev" ]]; then
+              echo "::error::Solo la rama dev puede abrir Pull Request hacia main."
+              exit 1
+            fi
+            exit 0
+          fi
+
+          if [[ "$BASE" != "dev" ]]; then
+            echo "::error::Los Pull Requests normales deben apuntar a dev."
+            exit 1
+          fi
+
+          if [[ ! "$HEAD" =~ ^(feature|fix|refactor|test|docs|chore|ci)/[0-9]+-[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+            echo "::error::Nombre de rama inválido. Usa <tipo>/<issue>-<slug>, por ejemplo feature/14-auth-profile."
+            exit 1
+          fi
+
+          if [[ ! "$TITLE" =~ ^(feat|fix|refactor|test|docs|chore|ci)(\([a-z0-9-]+\))?:[[:space:]].+ ]]; then
+            echo "::error::Título inválido. Usa Conventional Commit style, por ejemplo feat(auth): implement profile endpoint."
+            exit 1
+          fi
+
+          if ! grep -Eiq '(Closes|Fixes|Resolves)[[:space:]]+#[0-9]+' <<< "$BODY"; then
+            echo "::error::El PR debe enlazar su issue con Closes #<numero>, Fixes #<numero> o Resolves #<numero>."
+            exit 1
+          fi
+
+          if ! grep -Eiq -- '- \[[xX]\][[:space:]]+`npm run test:unit`' <<< "$BODY"; then
+            echo "::error::Antes de pedir revisión debes marcar como ejecutado npm run test:unit en la plantilla del PR."
+            exit 1
+          fi
+
+          if ! grep -Eiq -- '- \[[xX]\][[:space:]]+CI de GitHub Actions está verde\.' <<< "$BODY"; then
+            echo "::error::Marca la verificación de CI únicamente cuando el workflow esté verde."
+            exit 1
+          fi

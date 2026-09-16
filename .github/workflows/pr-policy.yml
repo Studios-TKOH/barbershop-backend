@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [opened, edited, synchronize, reopened, ready_for_review]
     branches: [dev, main]
+  push:
+    branches: [dev, main]
 
 permissions:
   contents: read
@@ -13,7 +15,14 @@ jobs:
   validate-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Validate target, branch, title and issue linkage
+      - name: Register policy check on protected branches
+        if: github.event_name == 'push'
+        run: |
+          echo "PR Policy check registered for required-status-check discovery."
+          echo "Full policy validation runs on pull_request events."
+
+      - name: Validate target, branch, title, issue linkage and local verification
+        if: github.event_name == 'pull_request'
         shell: bash
         run: |
           set -euo pipefail
@@ -55,7 +64,20 @@ jobs:
             exit 1
           fi
 
-          if ! grep -Eiq -- '- \[[xX]\][[:space:]]+`npm run test:unit`' <<< "$BODY"; then
-            echo "::error::Antes de pedir revisión debes marcar como ejecutado npm run test:unit en la plantilla del PR."
-            exit 1
-          fi
+          checks=(
+            'npm run format:check'
+            'npm run lint'
+            'npm run typecheck'
+            'npm run test:unit'
+            'npm run test:integration'
+            'npm run build'
+          )
+
+          for check in "${checks[@]}"; do
+            if ! grep -Fqi -- "- [x] \`$check\`" <<< "$BODY"; then
+              echo "::error::Antes de pedir revisión debes marcar como ejecutado: $check"
+              exit 1
+            fi
+          done
+
+          echo "PR policy validation passed."

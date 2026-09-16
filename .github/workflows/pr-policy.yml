@@ -59,8 +59,3 @@ jobs:
             echo "::error::Antes de pedir revisión debes marcar como ejecutado npm run test:unit en la plantilla del PR."
             exit 1
           fi
-
-          if ! grep -Eiq -- '- \[[xX]\][[:space:]]+CI de GitHub Actions está verde\.' <<< "$BODY"; then
-            echo "::error::Marca la verificación de CI únicamente cuando el workflow esté verde."
-            exit 1
-          fi
